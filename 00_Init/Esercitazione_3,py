@@ -1,0 +1,65 @@
+from typing import List
+
+
+class Student:
+    def __init__(self, first_name: str, last_name: str, age: int, city: str) -> None:
+        self.first_name = first_name
+        self.last_name = last_name
+        self.age = age
+        self.city = city
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}, {self.age} years old, from {self.city}"
+
+
+class School:
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self.students = []
+
+    def add_student(self, student: Student) -> None:
+        self.students.append(student)
+
+    def search_by_last_name(self, last_name: str) -> List[Student]:
+        return [s for s in self.students if s.last_name.lower() == last_name.lower()]
+
+    def search_by_age(self, age: int) -> List[Student]:
+        return [s for s in self.students if s.age == age]
+
+    def total_students(self) -> int:
+        return len(self.students)
+
+    def __len__(self) -> int:
+        return self.total_students()
+
+
+class Classroom:
+    def __init__(self, section: str, year: int) -> None:
+        self.section = section
+        self.year = year
+        self.students = []
+
+    def add_student(self, student: Student) -> None:
+        self.students.append(student)
+
+
+if __name__ == "__main__":
+    school = School("High School")
+
+    school.add_student(Student("Luke", "Rossi", 16, "Rome"))
+    school.add_student(Student("Anna", "Verdi", 18, "Milan"))
+    school.add_student(Student("Mark", "Rossi", 15, "Naples"))
+
+    print(f"Total students: {school.total_students()}")
+
+    print("Students with last name Rossi:")
+    for s in school.search_by_last_name("rossi"):
+        print(s)
+
+    print("18 year old students:")
+    for s in school.search_by_age(18):
+        print(f"- {s.first_name} {s.last_name}")
+
+    c5a = Classroom("5A", 2025)
+    c5a.add_student(school.students[1])
+    print(f"Class {c5a.section}: {len(c5a.students)} students")
