@@ -1,6 +1,6 @@
-from devices import DEVICES, update_status
-from report import filter_by_bus, filter_by_status
-from summary import create_summary
+from Devices import DEVICES, update_status
+from Report import filter_by_bus, filter_by_status
+from Summary import create_summary
 
 
 def main() -> None:
