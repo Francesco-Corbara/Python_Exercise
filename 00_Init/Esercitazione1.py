@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+
 class Track:
     def __init__(self, title: str, artist: str, duration: int) -> None:
         self.title = title
@@ -11,75 +12,87 @@ class Track:
         return self._title
 
     @title.setter
-    def title(self, value: str) -> None:
-        if not value:
-            raise ValueError("Title cannot be empty")
-        self._title = value
+    def title(self, new_title: str) -> None:
+        if len(new_title.strip()) == 0:
+            raise ValueError("Invalid title: string is empty")
+        self._title = new_title
 
     @property
     def artist(self) -> str:
         return self._artist
 
     @artist.setter
-    def artist(self, value: str) -> None:
-        if not value:
-            raise ValueError("Artist cannot be empty")
-        self._artist = value
+    def artist(self, new_artist: str) -> None:
+        if len(new_artist.strip()) == 0:
+            raise ValueError("Invalid artist: string is empty")
+        self._artist = new_artist
 
     @property
     def duration(self) -> int:
         return self._duration
 
     @duration.setter
-    def duration(self, value: int) -> None:
-        if value <= 0:
-            raise ValueError("Duration must be positive")
-        self._duration = value
+    def duration(self, new_duration: int) -> None:
+        if new_duration <= 0:
+            raise ValueError("Invalid duration: must be greater than zero")
+        self._duration = new_duration
 
     def is_short(self) -> bool:
-        return self.duration <= 180
+        if self.duration <= 180:
+            return True
+        return False
 
     def __str__(self) -> str:
-        return f"{self.title} - {self.artist} ({self.duration} seconds)"
+        return f"{self.title} by {self.artist} - {self.duration}s"
 
 
 class Playlist:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.tracks = []
+        self.tracks: List[Track] = []
 
-    def add_track(self, track: Track) -> None:
-        self.tracks.append(track)
+    def add_track(self, new_track: Track) -> None:
+        self.tracks.append(new_track)
 
     def total_duration(self) -> int:
-        return sum(item.duration for item in self.tracks)
+        total = 0
+        for track in self.tracks:
+            total += track.duration
+        return total
 
     def __str__(self) -> str:
-        return f"Playlist: {self.name} ({len(self.tracks)} tracks)"
+        return f"{self.name} [Total tracks: {len(self.tracks)}]"
 
 
 class CD:
     def __init__(self, title: str, artist: str, tracks: Optional[List[Track]] = None) -> None:
         self.title = title
         self.artist = artist
-        self.tracks = tracks if tracks is not None else []
+        if tracks is None:
+            self.tracks: List[Track] = []
+        else:
+            self.tracks = tracks
 
-    def add_track(self, track: Track) -> None:
-        self.tracks.append(track)
+    def add_track(self, new_track: Track) -> None:
+        self.tracks.append(new_track)
 
     @property
     def total_duration(self) -> int:
-        total_sec = 0
-        for item in self.tracks:
-            total_sec += item.duration
-        return total_sec
+        seconds = 0
+        for track in self.tracks:
+            seconds += track.duration
+        return seconds
 
-    def filter_by_artist(self, artist: str) -> List[Track]:
-        filtered = []
-        for item in self.tracks:
-            if artist == item.artist:
-                filtered.append(item)
-        return filtered
+    def get_short_tracks(self) -> List[Track]:
+        short_list: List[Track] = []
+        for track in self.tracks:
+            if track.is_short():
+                short_list.append(track)
+        return short_list
 
-    def copy_tracks(self) -> List[str]:
-        return [str(item) for item in self.tracks]
+    def remove_track(self, title: str) -> bool:
+        for track in self.tracks:
+            if track.title == title:
+                self.tracks.remove(track)
+                return True
+        return False

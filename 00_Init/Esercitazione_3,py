@@ -9,57 +9,72 @@ class Student:
         self.city = city
 
     def __str__(self) -> str:
-        return f"{self.first_name} {self.last_name}, {self.age} years old, from {self.city}"
+        return f"{self.first_name} {self.last_name} ({self.age} y/o) - {self.city}"
 
 
 class School:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.students = []
+        self.students: List[Student] = []
 
-    def add_student(self, student: Student) -> None:
-        self.students.append(student)
+    def add_student(self, new_student: Student) -> None:
+        self.students.append(new_student)
 
-    def search_by_last_name(self, last_name: str) -> List[Student]:
-        return [s for s in self.students if s.last_name.lower() == last_name.lower()]
+    def search_by_last_name(self, target_last_name: str) -> List[Student]:
+        matched: List[Student] = []
+        query = target_last_name.lower()
+        for student in self.students:
+            if student.last_name.lower() == query:
+                matched.append(student)
+        return matched
 
-    def search_by_age(self, age: int) -> List[Student]:
-        return [s for s in self.students if s.age == age]
+    def search_by_age(self, target_age: int) -> List[Student]:
+        matched: List[Student] = []
+        for student in self.students:
+            if student.age == target_age:
+                matched.append(student)
+        return matched
 
     def total_students(self) -> int:
         return len(self.students)
 
     def __len__(self) -> int:
-        return self.total_students()
+        return len(self.students)
 
 
 class Classroom:
     def __init__(self, section: str, year: int) -> None:
         self.section = section
         self.year = year
-        self.students = []
+        self.students: List[Student] = []
 
-    def add_student(self, student: Student) -> None:
-        self.students.append(student)
+    def add_student(self, new_student: Student) -> None:
+        self.students.append(new_student)
 
 
 if __name__ == "__main__":
-    school = School("High School")
+    my_school = School("Technical Institute")
 
-    school.add_student(Student("Luke", "Rossi", 16, "Rome"))
-    school.add_student(Student("Anna", "Verdi", 18, "Milan"))
-    school.add_student(Student("Mark", "Rossi", 15, "Naples"))
+    s1 = Student("John", "Smith", 17, "London")
+    s2 = Student("Emily", "Brown", 18, "Manchester")
+    s3 = Student("David", "Smith", 16, "Bristol")
 
-    print(f"Total students: {school.total_students()}")
+    my_school.add_student(s1)
+    my_school.add_student(s2)
+    my_school.add_student(s3)
 
-    print("Students with last name Rossi:")
-    for s in school.search_by_last_name("rossi"):
-        print(s)
+    print(f"School: {my_school.name} | Total students: {my_school.total_students()}")
 
-    print("18 year old students:")
-    for s in school.search_by_age(18):
-        print(f"- {s.first_name} {s.last_name}")
+    print("Students with last name Smith:")
+    smith_students = my_school.search_by_last_name("smith")
+    for student in smith_students:
+        print(f"  * {student}")
 
-    c5a = Classroom("5A", 2025)
-    c5a.add_student(school.students[1])
-    print(f"Class {c5a.section}: {len(c5a.students)} students")
+    print("18-year-old students:")
+    adult_students = my_school.search_by_age(18)
+    for student in adult_students:
+        print(f"  * {student.first_name} {student.last_name}")
+
+    class_4b = Classroom("4B", 2026)
+    class_4b.add_student(s2)
+    print(f"Classroom {class_4b.section} ({class_4b.year}): {len(class_4b.students)} student(s)")

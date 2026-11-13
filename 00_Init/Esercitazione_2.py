@@ -12,35 +12,44 @@ class Book:
     def reading_time(self) -> str:
         if self.pages < 100:
             return "1 hour"
-        if self.pages <= 200:
+        elif self.pages <= 200:
             return "2 hours"
-        return "more than 2 hours"
+        else:
+            return "more than 2 hours"
 
     def __str__(self) -> str:
-        return f"{self.title} - {self.author} ({self.year}), {self.pages} pages"
+        return f"'{self.title}' by {self.author} ({self.year}) - {self.publisher}, {self.pages} pp."
 
 
 class Library:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.catalog = []
+        self.books: List[Book] = []
 
-    def add_book(self, book_item: Book) -> None:
-        self.catalog.append(book_item)
+    def add_book(self, new_book: Book) -> None:
+        self.books.append(new_book)
 
-    def search_by_title(self, query: str) -> List[Book]:
-        term = query.lower()
-        return [item for item in self.catalog if term in item.title.lower()]
+    def search_by_title(self, title_query: str) -> List[Book]:
+        results: List[Book] = []
+        search_term = title_query.lower()
+        for book in self.books:
+            if search_term in book.title.lower():
+                results.append(book)
+        return results
 
-    def search_by_author(self, query: str) -> List[Book]:
-        term = query.lower()
-        return [item for item in self.catalog if term in item.author.lower()]
+    def search_by_author(self, author_query: str) -> List[Book]:
+        results: List[Book] = []
+        search_term = author_query.lower()
+        for book in self.books:
+            if search_term in book.author.lower():
+                results.append(book)
+        return results
 
     def total_books(self) -> int:
-        return len(self.catalog)
+        return len(self.books)
 
     def __len__(self) -> int:
-        return self.total_books()
+        return len(self.books)
 
 
 class Loan:
@@ -49,20 +58,26 @@ class Loan:
         self.borrower = borrower
 
     def __str__(self) -> str:
-        return f"{self.borrower} borrowed: {self.book.title}"
+        return f"Loan: {self.book.title} -> {self.borrower}"
 
 
 if __name__ == "__main__":
-    local_lib = Library("School Library")
+    my_library = Library("City Library")
 
-    local_lib.add_book(Book("The Lord of the Rings", "J.R.R. Tolkien", 1954, "Allen & Unwin", 1178))
-    local_lib.add_book(Book("Steel Ball Run", "Hirohiko Araki", 2004, "Shueisha", 240))
-    local_lib.add_book(Book("The Baron in the Trees", "Italo Calvino", 1957, "Einaudi", 288))
+    b1 = Book("1984", "George Orwell", 1949, "Secker & Warburg", 328)
+    b2 = Book("Dune", "Frank Herbert", 1965, "Chilton Books", 412)
+    b3 = Book("The Little Prince", "Antoine de Saint-Exupery", 1943, "Reynal & Hitchcock", 96)
 
-    print(f"Total books: {local_lib.total_books()}")
-    print("Search results for author 'tolkien':")
-    for item in local_lib.search_by_author("tolkien"):
-        print(f"- {item} | reading time: {item.reading_time()}")
+    my_library.add_book(b1)
+    my_library.add_book(b2)
+    my_library.add_book(b3)
 
-    current_loan = Loan(local_lib.catalog[0], "Mark")
-    print(current_loan)
+    print(f"Library: {my_library.name} | Total books: {my_library.total_books()}")
+
+    found_books = my_library.search_by_author("orwell")
+    print("Books found by author 'orwell':")
+    for book in found_books:
+        print(f"  * {book} (Estimated time: {book.reading_time()})")
+
+    active_loan = Loan(b2, "Alex")
+    print(active_loan)
